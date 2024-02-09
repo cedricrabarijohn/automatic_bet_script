@@ -1,4 +1,4 @@
-board_id='33ee2635-4a1d-496b-9a19-17e4b79a47ff'
+board_id='056f1931-0266-4ed6-97fe-40e661cd4975'
 auto_cash_out="2"
 
 get_board_result() {
@@ -61,7 +61,6 @@ init_all() {
     placed_bet="false"
     under_two_count=0
     multiplier=1
-    gain_count=0
 }
 
 # Function to clear the terminal
@@ -85,19 +84,22 @@ launch() {
     fi
     
     if [ "$placed_bet" == "true" ] && (( $(echo "$value > 1.99" | bc -l) )); then
-        clear_terminal
+        # clear_terminal
         ((total_gain += initial_bet_amount))
         ((gain_count++))
-        
-        if ((gain_count >= 2)); then
-            skip_next="true"
-            echo "... skipping next signal"
-        fi
-        
-        echo "Bet : $(($initial_bet_amount * $multiplier))MGA - Gain : $(($initial_bet_amount * $multiplier * 2))MGA"
-        echo "Total gain = $total_gain MGA"
+        current_time=$(date +"%T")
+        echo
+        echo "$current_time"
+        echo "... Bet : $(($initial_bet_amount * $multiplier))MGA - Gain : $(($initial_bet_amount * $multiplier * 2))MGA"
+        echo "... Total gain = $total_gain MGA"
         echo "... Removing bet"
         echo "... Waiting for next signal"
+        if ((gain_count >= 2)); then
+            skip_next="true"
+            gain_count=0
+            echo "... skipping next signal"
+        fi
+        echo
         initial_bet_amount=500
         init_all
         sleep 2
@@ -113,10 +115,10 @@ launch() {
         if [ "$placed_bet" == "true" ]; then
             if ((multiplier < 4)); then
                 ((multiplier *= 2))
-            else
-                init_all
+                # else
+                #     init_all
+                # fi
             fi
-            
             placed_bet="false"
         fi
         
